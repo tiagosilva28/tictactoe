@@ -4,6 +4,7 @@ import Square from "./Square";
 function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXisNext] = useState(true);
+  const [history, setHistory] = useState([]);
 
   const calculateWinner = (squares) => {
     const lines = [
@@ -30,6 +31,7 @@ function Board() {
   };
 
   const handleClick = (i) => {
+    const historyCopy = [...history];
     const squaresCopy = [...squares];
     if (calculateWinner(squaresCopy) || squaresCopy[i]) {
       return;
@@ -37,6 +39,8 @@ function Board() {
     squaresCopy[i] = xIsNext ? "X" : "O";
     setSquares(squaresCopy);
     setXisNext(!xIsNext);
+    historyCopy.concat(i + "Test");
+    setHistory(historyCopy);
   };
 
   const renderSquare = (i) => {
