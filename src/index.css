@@ -59,3 +59,11 @@ ol, ul {
 .game-info {
     margin-left: 20px;
 }
+.redoButton{
+    background-color: #46A2B9;
+    color:#ececec;
+    margin: 5px;
+    padding: 5px 10px;
+    border:0;
+    text-align: center;
+}

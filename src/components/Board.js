@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Square from "./Square";
 
 function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
   const [xIsNext, setXisNext] = useState(true);
   const [history, setHistory] = useState([]);
+  const [xWinner, setxWinner] = useState(0);
+  const [oWinner, setOwinner] = useState(0);
 
   const calculateWinner = (squares) => {
     const lines = [
@@ -39,8 +41,43 @@ function Board() {
     squaresCopy[i] = xIsNext ? "X" : "O";
     setSquares(squaresCopy);
     setXisNext(!xIsNext);
-    historyCopy.concat(i + "Test");
+    const newEntry = { index: i, value: squaresCopy[i] };
+    const newHistory = historyCopy.concat(newEntry);
+    setHistory(newHistory);
+  };
+
+  const newGame = () => {
+    setSquares(Array(9).fill(null));
+    setXisNext(true);
+    setHistory([]);
+  };
+
+  const handleWinnings = () => {
+    if (xIsNext) {
+      setxWinner(xWinner + 1);
+    }
+    setOwinner(oWinner + 1);
+  };
+
+  const handleRedoMovement = () => {
+    if (!history.length) {
+      return;
+    }
+    const historyCopy = [...history];
+    const squaresCopy = [...squares];
+    const lastEntry = historyCopy.pop();
+    squaresCopy[lastEntry.index] = lastEntry.value;
+    setSquares(squaresCopy);
+    setXisNext((prevState) => !prevState);
     setHistory(historyCopy);
+  };
+
+  const renderRedoButton = () => {
+    return (
+      <button className="redoButton" onClick={() => handleRedoMovement()}>
+        Redo movement
+      </button>
+    );
   };
 
   const renderSquare = (i) => {
@@ -49,11 +86,29 @@ function Board() {
 
   const winner = calculateWinner(squares);
   let status;
+
   if (winner) {
-    status = "Winner: " + winner;
+    status = (
+      <>
+        Winner: {winner}
+        <button className="redoButton" onClick={newGame}>
+          New Game
+        </button>
+      </>
+    );
+    handleWinnings();
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
+
+  const historyList = history.map((entry, index) => (
+    <li key={index}>
+      {`Move ${index + 1}: ${entry.value} in position ${
+        (entry.index + 1)
+      }x${Math.floor((entry.index + 1) / 3)}`}{" "}
+      {renderRedoButton()}
+    </li>
+  ));
 
   return (
     <div>
@@ -72,6 +127,13 @@ function Board() {
         {renderSquare(6)}
         {renderSquare(7)}
         {renderSquare(8)}
+      </div>
+      <div className="game-info">
+        <div>
+          <p>Number of X Wins: {xWinner}</p>
+          <p>Number of O Wins: {oWinner}</p>
+        </div>
+        <ol>{historyList}</ol>
       </div>
     </div>
   );
