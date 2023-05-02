@@ -53,6 +53,7 @@ function Board() {
   };
 
   const handleWinnings = () => {
+    debugger;
     if (xIsNext) {
       setxWinner(xWinner + 1);
     }
